@@ -13,7 +13,7 @@ const path = require("path");
 const seedAdmin = require("./createAdmin");
 
 
-// seedAdmin();
+seedAdmin();
 
 connectDB();
 

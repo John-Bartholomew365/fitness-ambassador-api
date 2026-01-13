@@ -8,7 +8,7 @@ const {
 } = require("../controller/blogController");
 
 const { isAdmin} = require("../middleware/adminMiddleware");
-const { upload } = require("../controller/authCtrl");
+const upload = require("../middleware/multerMiddleware");
 
 const blogRouter = express.Router();
 

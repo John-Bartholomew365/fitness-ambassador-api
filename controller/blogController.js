@@ -1,4 +1,7 @@
+const mongoose = require("mongoose");
 const Blog = require("../model/blog");
+const multer = require("multer");
+const path = require("path");
 
 /**
  * @desc Get all published blogs (with pagination + filters)
@@ -24,6 +27,7 @@ const getAllBlogs = async (req, res) => {
 
         res.status(200).json({
             success: true,
+            message: "Blogs fetched successfully",
             count: blogs.length,
             total,
             page,
@@ -39,32 +43,49 @@ const getAllBlogs = async (req, res) => {
 
 /**
  * @desc Get blog by ID or slug
- * @route GET /api/blogs/:idOrSlug
+ * @route GET /api/blogs/:id
  */
+
 const getBlogById = async (req, res) => {
     try {
-        const param = req.params.idOrSlug;
+        const id = req.params.id;
 
-        const blog = await Blog.findOne({
-            $or: [
-                { _id: param },
-                { slug: param }
-            ]
-        });
+        // Validate MongoDB ID
+        if (!mongoose.isValidObjectId(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid blog ID format"
+            });
+        }
+
+        const blog = await Blog.findById(id);
 
         if (!blog) {
-            return res.status(404).json({ success: false, message: "Blog not found" });
+            return res.status(404).json({
+                success: false,
+                message: "Blog not found"
+            });
         }
 
-        // ensure it is published before showing to public
+        // Only show published blogs to public
         if (!blog.isPublished) {
-            return res.status(403).json({ success: false, message: "Blog not published yet" });
+            return res.status(403).json({
+                success: false,
+                message: "Blog not published yet"
+            });
         }
 
-        res.status(200).json({ success: true, blog });
+        return res.status(200).json({
+            success: true,
+            message: "Blog fetched successfully",
+            blog
+        });
 
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
     }
 };
 

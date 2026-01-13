@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true },
+    password: { type: String, unique: true },
     vestId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Vest",
@@ -35,7 +36,7 @@ const userSchema = new mongoose.Schema(
       default: "pending"
     },
 
-    payment_proof: {
+    paymentProof: {
       type: String,   // URL or filename of uploaded proof image
       default: null
     },

@@ -110,19 +110,6 @@ exports.register = async (req, res) => {
   } 
 };
 
-// ================== MULTER ==================
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
-});
-
-const upload = multer({ storage });
-
-exports.upload = upload.fields([
-  { name: "receipt", maxCount: 1 },
-  { name: "paymentProof", maxCount: 1 },
-]);
-
 
 // ================== PAYMENT PROOF UPLOAD ==================
 exports.upload_payment = async (req, res) => {
@@ -137,7 +124,7 @@ exports.upload_payment = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    user.payment_proof = filePath;
+    user.paymentProof = filePath;
     user.payment_status = "pending"; // change to approved if you want auto-approval
     await user.save();
 
