@@ -39,7 +39,7 @@ exports.applyPartner = async (req, res) => {
             await sendUserPartnershipApplicationEmail(email, name);
         
             // Send email to admin
-            const adminEmail = process.env.ADMIN_EMAIL || "tosinsirmuel@gmail.com";
+            const adminEmail = process.env.ADMIN_EMAIL || "fitnessambassador84@gmail.com";
             await sendAdminPartnershipApplicationRequestEmail(adminEmail, name, email, phone, brandType, message);
 
         res.status(201).json({

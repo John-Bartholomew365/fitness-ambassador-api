@@ -21,7 +21,7 @@ exports.bookTraining = async (req, res) => {
         await sendUserBookingTrainingEmail(email, fullName, plan, experienceLevel, fitnessGoal);
 
         // Send email to admin
-        const adminEmail = process.env.ADMIN_EMAIL || "tosinsirmuel@gmail.com";
+        const adminEmail = process.env.ADMIN_EMAIL || "fitnessambassador84@gmail.com";
         await sendAdminBookingTrainingEmail(adminEmail, fullName, email, phoneNumber, plan, experienceLevel, fitnessGoal);
 
         res.status(201).json({ success: true, message: "Training session booked successfully", booking });
@@ -48,7 +48,7 @@ exports.bookSession = async (req, res) => {
     await sendUserBookingSessionEmail(email, fullName);
 
     // Send email to admin
-    const adminEmail = process.env.ADMIN_EMAIL || "tosinsirmuel@gmail.com";
+    const adminEmail = process.env.ADMIN_EMAIL || "fitnessambassador84@gmail.com";
     await sendAdminBookingSessionEmail(adminEmail, fullName, email, subject, message);
 
     res.status(201).json({ success: true, message: "Session Booked successfully", booking });
