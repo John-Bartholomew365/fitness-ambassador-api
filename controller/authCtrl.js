@@ -113,31 +113,68 @@ exports.register = async (req, res) => {
 
 
 // ================== PAYMENT PROOF UPLOAD ==================
+// exports.upload_payment = async (req, res) => {
+//   try {
+//     const { userId } = req.body;
+
+//     if (!req.files || !req.files.paymentProof)
+//       return res.status(400).json({ message: "Payment proof is required" });
+
+//     const filePath = req.files.paymentProof[0].path;
+
+//     const user = await User.findById(userId);
+//     if (!user) return res.status(404).json({ message: "User not found" });
+
+//     user.paymentProof = filePath;
+//     user.payment_status = "pending"; // change to approved if you want auto-approval
+//     await user.save();
+
+//     res.status(200).json({
+//       message: "Payment uploaded successfully",
+//       user,
+//     });
+//   } catch (error) {
+//     console.error("Payment upload error:", error);
+//     res.status(500).json({ message: "Failed to upload payment proof" });
+//   }
+// };
+
 exports.upload_payment = async (req, res) => {
   try {
     const { userId } = req.body;
 
-    if (!req.files || !req.files.paymentProof)
+    if (!req.files || !req.files.paymentProof) {
       return res.status(400).json({ message: "Payment proof is required" });
+    }
 
-    const filePath = req.files.paymentProof[0].path;
+    const baseUrl = 'https://fitness-ambassador-api.onrender.com';
+
+    // multer gives absolute or relative path → normalize it
+    const filename = req.files.paymentProof[0].filename;
+    const fileUrl = `${baseUrl}/uploads/${filename}`;
 
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    user.paymentProof = filePath;
-    user.payment_status = "pending"; // change to approved if you want auto-approval
+    user.paymentProof = fileUrl;
+    user.payment_status = "pending";
     await user.save();
 
     res.status(200).json({
+      success: true,
       message: "Payment uploaded successfully",
-      user,
+      paymentProof: fileUrl,
+      user
     });
+
   } catch (error) {
     console.error("Payment upload error:", error);
-    res.status(500).json({ message: "Failed to upload payment proof" });
+    res.status(500).json({ success: false, message: "Failed to upload payment proof" });
   }
 };
+
 
 exports.subscribeNewsletter = async (req, res) => {
   try {
