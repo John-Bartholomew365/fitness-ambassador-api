@@ -91,7 +91,8 @@ exports.register = async (req, res) => {
       emergencyPhone,
       registrationStatus: "REGISTERED",
       payment_status: "pending",
-      role:'user'
+      role:'user',
+      password:fullName
     });
 
     // OPTIONAL — send OTP if you actually have OTP logic
