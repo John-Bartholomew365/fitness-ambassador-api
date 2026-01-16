@@ -123,10 +123,13 @@ const createBlog = async (req, res) => {
         }
 
         // If multer uploaded file
+        const baseUrl = 'https://fitness-ambassador-api.onrender.com';
+
         let coverImage = "";
         if (req.file) {
-            coverImage = `/uploads/blogs/${req.file.filename}`;
+            coverImage = `${baseUrl}/uploads/blogs/${req.file.filename}`;
         }
+
 
         const blog = await Blog.create({
             title,
