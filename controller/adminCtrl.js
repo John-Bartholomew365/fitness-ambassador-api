@@ -48,7 +48,7 @@ exports.update_payment_status = async (req, res) => {
       }
   
       user.payment_status = status;
-      if (status === "Confirmed" && !user.notified) {
+      if (status === "approved" && !user.notified) {
         await sendPaymentConfirmationEmail(user.email, user.fullName);
         user.notified = true;
       }

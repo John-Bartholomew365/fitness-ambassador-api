@@ -1,18 +1,11 @@
 require("dotenv").config();
-const nodemailer = require("nodemailer");
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendRegistrationEmail = async (email, fullName) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
+    from: process.env.FROM_EMAIL,
+    to: [email],
     subject: `Hello ${fullName}, Your Registration is Pending Approval`,
     html: `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
@@ -48,7 +41,7 @@ const sendRegistrationEmail = async (email, fullName) => {
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await resend.emails.send(mailOptions);
     console.log("Registration email sent successfully");
   } catch (error) {
     console.error("Failed to send registration email:", error);
@@ -57,8 +50,8 @@ const sendRegistrationEmail = async (email, fullName) => {
 
 const sendPaymentConfirmationEmail = async (email, fullName) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
+    from: process.env.FROM_EMAIL,
+    to: [email],
     subject: "Payment Approved",
     html: `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
@@ -88,7 +81,7 @@ const sendPaymentConfirmationEmail = async (email, fullName) => {
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await resend.emails.send(mailOptions);
     console.log("Payment confirmation email sent successfully");
   } catch (error) {
     console.error("Failed to send email:", error);
@@ -97,8 +90,8 @@ const sendPaymentConfirmationEmail = async (email, fullName) => {
 
 const sendApprovalEmail = async (email, fullName, registration_id) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
+    from: process.env.FROM_EMAIL,
+    to: [email],
     subject: "Tradfit Registration Approved 🎉",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -123,14 +116,14 @@ const sendApprovalEmail = async (email, fullName, registration_id) => {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  await resend.emails.send(mailOptions);
   console.log("Approval email sent to:", email);
 };
 
 const sendRejectionEmail = async (email, fullName, admin_message) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
+    from: process.env.FROM_EMAIL,
+    to: [email],
     subject: "Tradfit Registration Rejected ❌",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -150,15 +143,15 @@ const sendRejectionEmail = async (email, fullName, admin_message) => {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  await resend.emails.send(mailOptions);
   console.log("Rejection email sent to:", email);
 };
 
 // Email to user confirming booking
 const sendUserBookingTrainingEmail = async (email, fullName, plan, experienceLevel, fitnessGoal) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
+    from: process.env.FROM_EMAIL,
+    to: [email],
     subject: `Training Session Booking Confirmation`,
     html: `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
@@ -190,7 +183,7 @@ const sendUserBookingTrainingEmail = async (email, fullName, plan, experienceLev
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await resend.emails.send(mailOptions);
     console.log("User booking email sent successfully");
   } catch (error) {
     console.error("Failed to send user booking email:", error);
@@ -200,7 +193,7 @@ const sendUserBookingTrainingEmail = async (email, fullName, plan, experienceLev
 // Email to admin notifying new booking
 const sendAdminBookingTrainingEmail = async (adminEmail, fullName, email, phoneNumber, plan, experienceLevel, fitnessGoal) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: process.env.FROM_EMAIL,
     to: adminEmail,
     subject: `New Training Booking Received`,
     html: `
@@ -220,7 +213,7 @@ const sendAdminBookingTrainingEmail = async (adminEmail, fullName, email, phoneN
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await resend.emails.send(mailOptions);
     console.log("Admin booking email sent successfully");
   } catch (error) {
     console.error("Failed to send admin booking email:", error);
@@ -229,8 +222,8 @@ const sendAdminBookingTrainingEmail = async (adminEmail, fullName, email, phoneN
 
 const sendNewsletterConfirmation = async (email) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
+    from: process.env.FROM_EMAIL,
+    to: [email],
     subject: "You Subscribed to Our Newsletter 🎉",
     html: `
       <div style="font-family: Arial; max-width:600px; margin:auto;">
@@ -244,7 +237,7 @@ const sendNewsletterConfirmation = async (email) => {
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await resend.emails.send(mailOptions);
     console.log("Newsletter confirmation email sent successfully");
   } catch (error) {
     console.error("Failed to send newsletter email:", error);
@@ -254,8 +247,8 @@ const sendNewsletterConfirmation = async (email) => {
 // Email to user confirming booking session
 const sendUserBookingSessionEmail = async (email, fullName) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
+    from: process.env.FROM_EMAIL,
+    to: [email],
     subject: `Your Session Booking Was Received 🎉`,
     html: `
       <div style="font-family: Arial; max-width:600px; margin:auto;">
@@ -270,7 +263,8 @@ const sendUserBookingSessionEmail = async (email, fullName) => {
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    const response = await resend.emails.send(mailOptions);
+    console.log("Resend response:", response);
     console.log("User booking email sent successfully");
   } catch (error) {
     console.error("Failed to send user booking email:", error);
@@ -280,7 +274,7 @@ const sendUserBookingSessionEmail = async (email, fullName) => {
 // Email to admin notifying new booking session
 const sendAdminBookingSessionEmail = async (adminEmail, fullName, email, subject, message) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: process.env.FROM_EMAIL,
     to: adminEmail,
     subject: `📩 New Training Session Booking`,
     html: `
@@ -298,7 +292,7 @@ const sendAdminBookingSessionEmail = async (adminEmail, fullName, email, subject
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await resend.emails.send(mailOptions);
     console.log("Admin booking email sent successfully");
   } catch (error) {
     console.error("Failed to send admin booking email:", error);
@@ -308,8 +302,8 @@ const sendAdminBookingSessionEmail = async (adminEmail, fullName, email, subject
 // Email to user confirming partner application
 const sendUserPartnershipApplicationEmail = async (email, name) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
+    from: process.env.FROM_EMAIL,
+    to: [email],
     subject: `Your Partnership Application Was Received 🤝`,
     html: `
       <div style="font-family: Arial; max-width:600px; margin:auto;">
@@ -329,7 +323,7 @@ const sendUserPartnershipApplicationEmail = async (email, name) => {
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await resend.emails.send(mailOptions);
     console.log("User booking email sent successfully");
   } catch (error) {
     console.error("Failed to send user booking email:", error);
@@ -339,7 +333,7 @@ const sendUserPartnershipApplicationEmail = async (email, name) => {
 // Email to admin notifying new partner application
 const sendAdminPartnershipApplicationRequestEmail = async (adminEmail, name, email, phone, brandType, message) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: process.env.FROM_EMAIL,
     to: adminEmail,
     subject: `📢 New Partner Application Received`,
     html: `
@@ -360,7 +354,7 @@ const sendAdminPartnershipApplicationRequestEmail = async (adminEmail, name, ema
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await resend.emails.send(mailOptions);
     console.log("Admin booking email sent successfully");
   } catch (error) {
     console.error("Failed to send admin booking email:", error);
@@ -372,6 +366,7 @@ const sendAdminPartnershipApplicationRequestEmail = async (adminEmail, name, ema
 
 
 module.exports = { 
+  resend,
   sendRegistrationEmail, 
   sendPaymentConfirmationEmail, 
   sendApprovalEmail, 
