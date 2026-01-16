@@ -3,13 +3,7 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true },
-    password: {
-      type: String,
-      required: function () {
-        return this.role === "admin"; // only admin needs password
-      },
-      select: false // hides password from queries
-    },
+    password: {type: String,},
     vestId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Vest",
