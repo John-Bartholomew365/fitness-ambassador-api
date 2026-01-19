@@ -14,6 +14,7 @@ const PartnerSchema = new mongoose.Schema({
     phone: { type: String, required: true },
     brandType: { type: String, required: true },
     message: { type: String, required: true },
+    partnerType:{type: String, required: true},
 
     status: {
         type: String,

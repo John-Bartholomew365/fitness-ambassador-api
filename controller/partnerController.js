@@ -7,10 +7,10 @@ const Partner = require("../model/partner");
  */
 exports.applyPartner = async (req, res) => {
     try {
-        const { name, email, phone, brandType, message } = req.body;
+        const { name, email, phone, brandType, message, partnerType } = req.body;
 
         // === REQUIRED FIELD VALIDATION ===
-        if (!name || !email || !phone || !brandType || !message) {
+        if (!name || !email || !phone || !brandType || !message || !partnerType) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required",
@@ -32,7 +32,8 @@ exports.applyPartner = async (req, res) => {
             email,
             phone,
             brandType,
-            message
+            message,
+            partnerType
         });
 
           // Send email to user confirming booking
@@ -40,7 +41,7 @@ exports.applyPartner = async (req, res) => {
         
             // Send email to admin
             const adminEmail = process.env.ADMIN_EMAIL || "fitnessambassador84@gmail.com";
-            await sendAdminPartnershipApplicationRequestEmail(adminEmail, name, email, phone, brandType, message);
+            await sendAdminPartnershipApplicationRequestEmail(adminEmail, name, email, phone, brandType, message, partnerType);
 
         res.status(201).json({
             success: true,

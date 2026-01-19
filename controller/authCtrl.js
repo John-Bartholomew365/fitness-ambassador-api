@@ -143,14 +143,14 @@ exports.upload_payment = async (req, res) => {
   try {
     const { userId } = req.body;
 
-    if (!req.files || !req.files.paymentProof) {
+    if (!req.file) {
       return res.status(400).json({ message: "Payment proof is required" });
     }
-
+    
     const baseUrl = 'https://fitness-ambassador-api.onrender.com';
 
     // multer gives absolute or relative path → normalize it
-    const filename = req.files.paymentProof[0].filename;
+    const filename = req.file.filename;
     const fileUrl = `${baseUrl}/uploads/${filename}`;
 
     const user = await User.findById(userId);
