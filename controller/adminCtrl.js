@@ -7,13 +7,23 @@ const user = require("../model/user");
 // Fetch all users
 exports.get_all_users = async (req, res) => {
   try {
-    const user = await User.find({ role: "user" });
-    res.status(200).json(user);
+    const users = await User.find({ role: "user" })
+      .populate("vestId");
+
+    res.status(200).json({
+      success: true,
+      count: users.length,
+      users
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Failed to fetch user" });
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch users"
+    });
   }
 };
+
 
 // Fetch payment proof for a specific user
 exports.get_payment_proof = async (req, res) => {
@@ -25,11 +35,11 @@ exports.get_payment_proof = async (req, res) => {
       return res.status(404).json({ message: "user not found" });
     }
 
-    if (!user.payment_proof) {
+    if (!user.paymentProof) {
       return res.status(404).json({ message: "No payment proof uploaded" });
     }
 
-    res.status(200).json({ payment_proof: user.payment_proof });
+    res.status(200).json({ paymentProof: user.paymentProof });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch payment proof" });

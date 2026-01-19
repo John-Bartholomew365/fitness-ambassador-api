@@ -10,7 +10,7 @@ const sendRegistrationEmail = async (email, fullName) => {
     html: `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
         <div style="text-align: center; padding: 20px;">
-          <img src="https://i.imgur.com/Qf5RI2E.png" alt="Victhaw Official Logo" style="max-width: 100px; margin-bottom: 20px;">
+          <img src="https://imgur.com/a/Cjph91J" alt="Fitness Ambassador Official Logo" style="max-width: 100px; margin-bottom: 20px;">
         </div>
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
           <h2 style="text-align: center; color: #C81E23;">Hello ${fullName},</h2>
@@ -56,7 +56,7 @@ const sendPaymentConfirmationEmail = async (email, fullName) => {
     html: `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
         <div style="text-align: center; padding: 20px;">
-          <img src="https://i.imgur.com/Qf5RI2E.png" alt="Victhaw Official Logo" style="max-width: 100px; margin-bottom: 20px;">
+          <img src="https://imgur.com/a/Cjph91J" alt="Fitness Ambassador Official Logo" style="max-width: 100px; margin-bottom: 20px;">
         </div>
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
           <h2 style="color: #C81E23; text-align: center;">Payment Approved</h2>
@@ -65,7 +65,7 @@ const sendPaymentConfirmationEmail = async (email, fullName) => {
             Your payment has been successfully approved. You can now log in to your account and access all the features.<br><br>
             If you have any questions or need further assistance, feel free to contact us.<br><br>
             Best regards,<br>
-            <strong>Victhaw Official</strong>
+            <strong>Fitness Ambassador Official Logo</strong>
           </p>
           <div style="text-align: center; margin-top: 20px;">
             <a href="victhawofficial.com/login" style="background-color: #C81E23; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
@@ -92,11 +92,11 @@ const sendApprovalEmail = async (email, fullName, registration_id) => {
   const mailOptions = {
     from: process.env.FROM_EMAIL,
     to: [email],
-    subject: "Tradfit Registration Approved 🎉",
+    subject: "Fitness Ambassador Registration Approved 🎉",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="text-align: center; padding: 20px;">
-          <img src="https://i.imgur.com/Qf5RI2E.png" alt="Tradfit Logo" style="max-width: 120px; margin-bottom: 20px;">
+          <img src="https://imgur.com/a/Cjph91J" alt="Fitness Ambassador Official Logo" style="max-width: 120px; margin-bottom: 20px;">
         </div>
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
           <h2 style="color: #28a745; text-align: center;">Registration Approved ✅</h2>
@@ -110,7 +110,7 @@ const sendApprovalEmail = async (email, fullName, registration_id) => {
           </div>
           <p>Bring this Ticket ID along with your details to the event for confirmation.</p>
           <p>We look forward to seeing you! 🎉</p>
-          <p>Best regards,<br><strong>The Tradfit Rhythms Team</strong></p>
+          <p>Best regards,<br><strong>The Fitness Ambassador</strong></p>
         </div>
       </div>
     `,
@@ -124,20 +124,20 @@ const sendRejectionEmail = async (email, fullName, admin_message) => {
   const mailOptions = {
     from: process.env.FROM_EMAIL,
     to: [email],
-    subject: "Tradfit Registration Rejected ❌",
+    subject: "Fitness AmbassadorRegistration Rejected ❌",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="text-align: center; padding: 20px;">
-          <img src="https://i.imgur.com/Qf5RI2E.png" alt="Tradfit Logo" style="max-width: 120px; margin-bottom: 20px;">
+          <img src="https://imgur.com/a/Cjph91J" alt="Fitness Ambassador Official Logo" style="max-width: 120px; margin-bottom: 20px;">
         </div>
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
           <h2 style="color: #dc3545; text-align: center;">Registration Rejected ❌</h2>
           <p>Hello <strong>${fullName}</strong>,</p>
-          <p>Unfortunately, your registration for <strong>Tradfit</strong> has been rejected.</p>
+          <p>Unfortunately, your registration for <strong>Fitness Ambassador</strong> has been rejected.</p>
           <p>Reason:</p>
           <blockquote style="font-style: italic; color: #555;">${admin_message || "No reason provided"}</blockquote>
           <p>You may try registering again or contact support for clarification.</p>
-          <p>Best regards,<br><strong>The Tradfit Team</strong></p>
+          <p>Best regards,<br><strong>The Fitness Ambassador Team</strong></p>
         </div>
       </div>
     `,
@@ -156,7 +156,7 @@ const sendUserBookingTrainingEmail = async (email, fullName, plan, experienceLev
     html: `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
         <div style="text-align: center; padding: 20px;">
-          <img src="https://i.imgur.com/Qf5RI2E.png" alt="Logo" style="max-width: 100px; margin-bottom: 20px;">
+          <img src="https://imgur.com/a/Cjph91J" alt="Fitness Ambassador Official Logo" style="max-width: 100px; margin-bottom: 20px;">
         </div>
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
           <h2 style="text-align: center; color: #C81E23;">Hi ${fullName},</h2>
