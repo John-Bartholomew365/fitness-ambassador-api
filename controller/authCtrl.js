@@ -1,12 +1,14 @@
 const User = require("../model/user");
-const {sendRegistrationEmail, sendNewsletterConfirmation } = require("../config/email");
+const {
+  sendRegistrationEmail,
+  sendNewsletterConfirmation,
+} = require("../config/email");
 const generateTicketId = require("../utilis/ticketIdGenerator");
 const Vest = require("../model/vest");
 const multer = require("multer");
 const Newsletter = require("../model/newsletter");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
 
 // ================== CHOOSE VEST ==================
 exports.chooseVest = async (req, res) => {
@@ -85,14 +87,14 @@ exports.register = async (req, res) => {
       gender,
       dobDay,
       dobMonth,
-      medicalDetails: medicalCondition?.true? medicalDetails : null,
+      medicalDetails: medicalCondition?.true ? medicalDetails : null,
       medicalDetails,
       emergencyName,
       emergencyPhone,
       registrationStatus: "REGISTERED",
       payment_status: "pending",
-      role:'user',
-      password:fullName
+      role: "user",
+      password: fullName,
     });
 
     // OPTIONAL — send OTP if you actually have OTP logic
@@ -105,12 +107,13 @@ exports.register = async (req, res) => {
     });
   } catch (error) {
     console.error("Registration error:", error);
-    res
-      .status(500)
-      .json({ statusCode: "01", message: "Server error", error: error.message });
-  } 
+    res.status(500).json({
+      statusCode: "01",
+      message: "Server error",
+      error: error.message,
+    });
+  }
 };
-
 
 // ================== PAYMENT PROOF UPLOAD ==================
 exports.upload_payment = async (req, res) => {
@@ -121,11 +124,12 @@ exports.upload_payment = async (req, res) => {
       return res.status(400).json({ message: "Payment proof is required" });
     }
 
-    const baseUrl = 'https://fitness-ambassador-api.onrender.com';
-
-    // multer gives absolute or relative path → normalize it
+    // ✅ Use the SAME pattern that worked for blogs
+    const baseUrl = "https://fitness-ambassador-api.onrender.com";
     const filename = req.file.filename;
-    const fileUrl = `${baseUrl}/uploads/${filename}`;
+
+    // ✅ THIS IS THE KEY: Use the exact same URL structure as blogs
+    const fileUrl = `${baseUrl}/api/uploads/${filename}`;
 
     const user = await User.findById(userId);
     if (!user) {
@@ -140,15 +144,15 @@ exports.upload_payment = async (req, res) => {
       success: true,
       message: "Payment uploaded successfully",
       paymentProof: fileUrl,
-      user
+      user,
     });
-
   } catch (error) {
     console.error("Payment upload error:", error);
-    res.status(500).json({ success: false, message: "Failed to upload payment proof" });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to upload payment proof" });
   }
 };
-
 
 exports.subscribeNewsletter = async (req, res) => {
   try {
@@ -157,7 +161,9 @@ exports.subscribeNewsletter = async (req, res) => {
     // Check if email already exists
     const existing = await Newsletter.findOne({ email });
     if (existing) {
-      return res.status(400).json({ success: false, message: "Email already subscribed" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Email already subscribed" });
     }
 
     // Save email to database
@@ -166,11 +172,18 @@ exports.subscribeNewsletter = async (req, res) => {
     // Send confirmation email
     await sendNewsletterConfirmation(email);
 
-    res.status(201).json({ success: true, message: "Subscribed to newsletter successfully", subscription });
-
+    res.status(201).json({
+      success: true,
+      message: "Subscribed to newsletter successfully",
+      subscription,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Failed to subscribe", error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Failed to subscribe",
+      error: error.message,
+    });
   }
 };
 
@@ -220,11 +233,9 @@ exports.loginAdmin = async (req, res) => {
       email: dbAdmin.email,
     };
 
-    const token = jwt.sign(
-      payload,
-      process.env.JWT_SECRET || "secret",
-      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
-    );
+    const token = jwt.sign(payload, process.env.JWT_SECRET || "secret", {
+      expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+    });
 
     return res.status(200).json({
       success: true,
@@ -236,7 +247,6 @@ exports.loginAdmin = async (req, res) => {
         role: dbAdmin.role,
       },
     });
-
   } catch (error) {
     console.error("Admin login error:", error);
     res.status(500).json({
