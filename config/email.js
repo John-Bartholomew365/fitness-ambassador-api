@@ -331,7 +331,7 @@ const sendUserPartnershipApplicationEmail = async (email, name) => {
 };
 
 // Email to admin notifying new partner application
-const sendAdminPartnershipApplicationRequestEmail = async (adminEmail, name, email, phone, brandType, message) => {
+const sendAdminPartnershipApplicationRequestEmail = async (adminEmail, name, email, phone, brandType, partnerType, message) => {
   const mailOptions = {
     from: process.env.FROM_EMAIL,
     to: adminEmail,
