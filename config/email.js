@@ -62,15 +62,11 @@ const sendPaymentConfirmationEmail = async (email, fullName) => {
           <h2 style="color: #C81E23; text-align: center;">Payment Approved</h2>
           <p style="font-size: 16px; line-height: 1.6;">
             Hello <span style="color: #C81E23;">${fullName}</span>,<br><br>
-            Your payment has been successfully approved. You can now log in to your account and access all the features.<br><br>
+            Your payment has been successfully approved..<br><br>
             If you have any questions or need further assistance, feel free to contact us.<br><br>
             Best regards,<br>
             <strong>Fitness Ambassador Official Logo</strong>
           </p>
-          <div style="text-align: center; margin-top: 20px;">
-            <a href="victhawofficial.com/login" style="background-color: #C81E23; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
-              Log In Now
-            </a>
           </div>
         </div>
         <div style="text-align: center; margin-top: 20px; font-size: 14px; color: #777;">
