@@ -344,6 +344,7 @@ const sendAdminPartnershipApplicationRequestEmail = async (adminEmail, name, ema
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone}</p>
         <p><strong>Brand Type:</strong> ${brandType}</p>
+        <p><strong>Partner Type:</strong> ${partnerType}</p>
         <p><strong>Message:</strong> ${message}</p>
 
         <p style="margin-top:20px;">
