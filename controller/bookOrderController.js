@@ -1,7 +1,7 @@
 const BookOrder = require("../model/bookOrder");
 const fs = require("fs");
 const path = require("path");
-const { sendUserBookOrderEmail, sendUserBookOrderApproveEmail } = require("../config/email");
+const { sendUserBookOrderEmail, sendUserBookOrderApproveEmail, sendAdminBookOrderEmail } = require("../config/email");
 
 // Create a new book order
 const createBookOrder = async (req, res) => {
