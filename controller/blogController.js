@@ -150,9 +150,9 @@ const createBlog = async (req, res) => {
  */
 const updateBlog = async (req, res) => {
   try {
-    const { publish, featured } = req.body;
+    // const { publish, featured } = req.body;
 
-    let updateData = { ...req.body };
+    const updateData = { ...req.body };
 
     if (publish !== undefined) {
       updateData.isPublished = publish === true || publish === "true";
@@ -161,6 +161,13 @@ const updateBlog = async (req, res) => {
 
     if (featured !== undefined) {
       updateData.featured = featured === true || featured === "true";
+    }
+
+    if (updateData.title) {
+      updateData.slug = slugify(updateData.title, {
+        lower: true,
+        strict: true,
+      });
     }
 
     const blog = await Blog.findByIdAndUpdate(req.params.id, updateData, {
