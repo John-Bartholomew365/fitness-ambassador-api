@@ -158,10 +158,9 @@ const updateBlog = async (req, res) => {
        Handle publish logic
     ------------------------------*/
     if (updateData.publish !== undefined) {
-      // Normalize to boolean
       updateData.isPublished = String(updateData.publish).toLowerCase() === "true";
       updateData.status = updateData.isPublished ? "published" : "draft";
-      delete updateData.publish; // ❗ remove the temporary field
+      delete updateData.publish;
     }
 
     /* -----------------------------
@@ -175,10 +174,7 @@ const updateBlog = async (req, res) => {
        Update slug if title changes
     ------------------------------*/
     if (updateData.title) {
-      updateData.slug = slugify(updateData.title, {
-        lower: true,
-        strict: true,
-      });
+      updateData.slug = slugify(updateData.title, { lower: true, strict: true });
     }
 
     /* -----------------------------
@@ -188,13 +184,12 @@ const updateBlog = async (req, res) => {
       updateData.coverImage = `${process.env.BASE_URL}/uploads/blogs/${req.file.filename}`;
     }
 
-    /* -----------------------------
-       Log update data (debug)
-    ------------------------------*/
-    console.log("Updating blog with:", updateData);
+    // DEBUG: log update
+    console.log("req.params.id:", req.params.id);
+    console.log("updateData:", updateData);
 
     /* -----------------------------
-       Update blog in DB
+       Update blog
     ------------------------------*/
     const blog = await Blog.findByIdAndUpdate(
       req.params.id,
@@ -203,11 +198,11 @@ const updateBlog = async (req, res) => {
     );
 
     if (!blog) {
-      return res.status(404).json({
-        success: false,
-        message: "Blog not found",
-      });
+      console.log("Blog not found!");
+      return res.status(404).json({ success: false, message: "Blog not found" });
     }
+
+    console.log("Blog updated:", blog);
 
     return res.status(200).json({
       success: true,
