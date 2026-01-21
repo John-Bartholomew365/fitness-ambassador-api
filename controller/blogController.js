@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Blog = require("../model/blog");
 const multer = require("multer");
 const path = require("path");
+const slugify = require("slugify");
+
 
 /**
  * @desc Get all published blogs (with pagination + filters)
@@ -150,19 +152,30 @@ const createBlog = async (req, res) => {
  */
 const updateBlog = async (req, res) => {
   try {
-    // const { publish, featured } = req.body;
-
     const updateData = { ...req.body };
 
-    if (publish !== undefined) {
-      updateData.isPublished = publish === true || publish === "true";
+    /* -----------------------------
+       Handle publish logic
+    ------------------------------*/
+    if (updateData.publish !== undefined) {
+      updateData.isPublished =
+        updateData.publish === true || updateData.publish === "true";
+
       updateData.status = updateData.isPublished ? "published" : "draft";
+      delete updateData.publish; // ❗IMPORTANT
     }
 
-    if (featured !== undefined) {
-      updateData.featured = featured === true || featured === "true";
+    /* -----------------------------
+       Handle featured logic
+    ------------------------------*/
+    if (updateData.featured !== undefined) {
+      updateData.featured =
+        updateData.featured === true || updateData.featured === "true";
     }
 
+    /* -----------------------------
+       Update slug if title changes
+    ------------------------------*/
     if (updateData.title) {
       updateData.slug = slugify(updateData.title, {
         lower: true,
@@ -170,25 +183,46 @@ const updateBlog = async (req, res) => {
       });
     }
 
-    const blog = await Blog.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-      runValidators: true,
-    });
+    /* -----------------------------
+       Update cover image if uploaded
+    ------------------------------*/
+    if (req.file) {
+      updateData.coverImage = `${process.env.BASE_URL}/uploads/blogs/${req.file.filename}`;
+    }
 
-    if (!blog)
-      return res
-        .status(404)
-        .json({ success: false, message: "Blog not found" });
+    /* -----------------------------
+       Force Mongo to update fields
+    ------------------------------*/
+    const blog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateData }, // ❗THIS FIXES YOUR ISSUE
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
-    res.status(200).json({
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found",
+      });
+    }
+
+    return res.status(200).json({
       success: true,
       message: "Blog updated successfully",
       blog,
     });
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
+  } catch (error) {
+    console.error("Update blog error:", error);
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
+
 
 /**
  * @desc Delete blog (Admin)
