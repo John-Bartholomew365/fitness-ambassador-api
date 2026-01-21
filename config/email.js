@@ -358,9 +358,88 @@ const sendAdminPartnershipApplicationRequestEmail = async (adminEmail, name, ema
   }
 };
 
+const sendUserBookOrderEmail = async (email, fullName) => {
+  const mailOptions = {
+    from: process.env.FROM_EMAIL,
+    to: [email],
+    subject: `Your Book Order Confirmation 📚`,
+    html: `
+      <p>Hi <strong>${fullName}</strong>,</p>
 
+        <p>Thank you for ordering the <strong>Workout Compass Book</strong>.</p>
 
+        <p>We have received your payment receipt successfully.</p>
 
+        <p><strong>Our admin team will verify your payment shortly.</strong></p>
+
+        <p>You will be notified once verification is completed.</p>
+
+        <br/>
+        <p>Regards,<br/>Fitness Ambassador Team</p>
+    `
+  };
+  try {
+    await resend.emails.send(mailOptions);
+    console.log("Admin booking email sent successfully");
+  } catch (error) {
+    console.error("Failed to send admin booking email:", error);
+  }
+};
+
+const sendAdminBookOrderEmail = async (adminEmail, fullName, email, phoneNumber, deliveryAddress, additionalNotes, totalAmount) => {
+  const mailOptions = {
+    from: process.env.FROM_EMAIL,
+    to: adminEmail,
+    subject: `📚 New Book Order Received`,
+    html: `
+      <div style="font-family: Arial; max-width:600px; margin:auto;">
+        <h2>New Book Order Alert</h2>
+        <p><strong>Name:</strong> ${fullName}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone Number:</strong> ${phoneNumber}</p>
+        <p><strong>Delivery Address:</strong> ${deliveryAddress}</p>
+        <p><strong>Additional Notes:</strong> ${additionalNotes}</p>
+        <p><strong>Total Amount:</strong> ₦${totalAmount}</p>
+        <p>Please verify the payment receipt and process the order accordingly.</p>
+      </div>
+    `
+  };
+
+  try {
+    await resend.emails.send(mailOptions);
+    console.log("Admin booking email sent successfully");
+  } catch (error) {
+    console.error("Failed to send admin booking email:", error);
+  }
+};
+
+const sendUserBookOrderApproveEmail = async (email, fullName) => {
+  const mailOptions = {
+    from: process.env.FROM_EMAIL,
+    to: [email],
+    subject: `Your Book Order Payment Confirmed 📚`,
+    html: `
+      <p>Hi <strong>${fullName}</strong>,</p>
+
+        <p>Thank you for ordering the <strong>Workout Compass Book</strong>.</p>
+
+        <p>Your payment has been confirmed.</p>
+
+        <p><strong>Our admin team will get in touch with you shortly.</strong></p>
+
+        <p>You will be notified once delivery is ready.</p>
+
+        <br/>
+        <p>Regards,<br/>Fitness Ambassador Team</p>
+    `
+  };
+  try {
+    await resend.emails.send(mailOptions);
+    console.log("User booking email sent successfully");
+  } catch (error) {
+    console.error("Failed to send admin booking email:", error);
+  }
+};
 
 module.exports = { 
   resend,
@@ -374,5 +453,8 @@ module.exports = {
   sendUserBookingSessionEmail,
   sendAdminBookingSessionEmail,
   sendUserPartnershipApplicationEmail,
-  sendAdminPartnershipApplicationRequestEmail
+  sendAdminPartnershipApplicationRequestEmail,
+  sendUserBookOrderEmail,
+  sendAdminBookOrderEmail,
+  sendUserBookOrderApproveEmail
 };
