@@ -158,19 +158,17 @@ const updateBlog = async (req, res) => {
        Handle publish logic
     ------------------------------*/
     if (updateData.publish !== undefined) {
-      updateData.isPublished =
-        updateData.publish === true || updateData.publish === "true";
-
+      // Normalize to boolean
+      updateData.isPublished = String(updateData.publish).toLowerCase() === "true";
       updateData.status = updateData.isPublished ? "published" : "draft";
-      delete updateData.publish; // ❗IMPORTANT
+      delete updateData.publish; // ❗ remove the temporary field
     }
 
     /* -----------------------------
        Handle featured logic
     ------------------------------*/
     if (updateData.featured !== undefined) {
-      updateData.featured =
-        updateData.featured === true || updateData.featured === "true";
+      updateData.featured = String(updateData.featured).toLowerCase() === "true";
     }
 
     /* -----------------------------
@@ -191,15 +189,17 @@ const updateBlog = async (req, res) => {
     }
 
     /* -----------------------------
-       Force Mongo to update fields
+       Log update data (debug)
+    ------------------------------*/
+    console.log("Updating blog with:", updateData);
+
+    /* -----------------------------
+       Update blog in DB
     ------------------------------*/
     const blog = await Blog.findByIdAndUpdate(
       req.params.id,
-      { $set: updateData }, // ❗THIS FIXES YOUR ISSUE
-      {
-        new: true,
-        runValidators: true,
-      }
+      { $set: updateData },
+      { new: true, runValidators: true }
     );
 
     if (!blog) {
@@ -222,7 +222,6 @@ const updateBlog = async (req, res) => {
     });
   }
 };
-
 
 /**
  * @desc Delete blog (Admin)
