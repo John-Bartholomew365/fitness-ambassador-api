@@ -441,6 +441,20 @@ const sendUserBookOrderApproveEmail = async (email, fullName) => {
   }
 };
 
+const sendUserBookOrderRejectEmail = async (email, fullName, adminMessage) => {
+  await resend.emails.send({
+    from: process.env.FROM_EMAIL,
+    to: [email],
+    subject: "Payment Verification Failed ❌",
+    html: `
+      <p>Hello <strong>${fullName}</strong>,</p>
+      <p>Unfortunately, your payment could not be verified.</p>
+      <p><strong>Reason:</strong> ${adminMessage || "No reason provided"}</p>
+      <p>Please re-submit your payment receipt.</p>
+    `
+  });
+};
+
 module.exports = { 
   resend,
   sendRegistrationEmail, 
@@ -456,5 +470,6 @@ module.exports = {
   sendAdminPartnershipApplicationRequestEmail,
   sendUserBookOrderEmail,
   sendAdminBookOrderEmail,
-  sendUserBookOrderApproveEmail
+  sendUserBookOrderApproveEmail,
+  sendUserBookOrderRejectEmail
 };

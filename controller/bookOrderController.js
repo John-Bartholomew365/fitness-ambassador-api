@@ -1,7 +1,7 @@
 const BookOrder = require("../model/bookOrder");
 const fs = require("fs");
 const path = require("path");
-const { sendUserBookOrderEmail, sendUserBookOrderApproveEmail, sendAdminBookOrderEmail } = require("../config/email");
+const { sendUserBookOrderEmail, sendUserBookOrderApproveEmail, sendAdminBookOrderEmail, sendUserBookOrderRejectEmail } = require("../config/email");
 
 // Create a new book order
 const createBookOrder = async (req, res) => {
@@ -90,38 +90,102 @@ const getAllBookOrders = async (req, res) => {
 };
 
 // Confirm payment for book order
+// const confirmPayment = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+
+//     const order = await BookOrder.findByIdAndUpdate(
+//       id,
+//       { paymentStatus: "confirmed", updatedAt: Date.now() },
+//       { new: true }
+//     );
+
+//     if (!order) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Book order not found"
+//       });
+//     }
+//       // Send email to user confirming booking
+//       await sendUserBookOrderApproveEmail(order.email, order.fullName);
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "Payment confirmed successfully",
+//       data: order
+//     });
+//   } catch (error) {
+//     console.error("Error confirming payment:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Error confirming payment",
+//       error: error.message
+//     });
+//   }
+// };
+
 const confirmPayment = async (req, res) => {
-  try {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
+        const { paymentStatus, adminMessage } = req.body;
 
-    const order = await BookOrder.findByIdAndUpdate(
-      id,
-      { paymentStatus: "confirmed", updatedAt: Date.now() },
-      { new: true }
-    );
+        // 🔒 Validate status
+        if (!["confirmed", "failed"].includes(paymentStatus)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid payment status. Use 'confirmed' or 'failed'"
+            });
+        }
 
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Book order not found"
-      });
+        const order = await BookOrder.findByIdAndUpdate(
+            id,
+            {
+                paymentStatus,
+                updatedAt: Date.now()
+            },
+            { new: true }
+        );
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Book order not found"
+            });
+        }
+
+        /* ================= EMAIL HANDLING ================= */
+
+        if (paymentStatus === "confirmed") {
+            // ✅ Approval email
+            await sendUserBookOrderApproveEmail(
+                order.email,
+                order.fullName
+            );
+        }
+
+        if (paymentStatus === "failed") {
+            // ❌ Rejection email
+            await sendUserBookOrderRejectEmail(
+                order.email,
+                order.fullName,
+                adminMessage
+            );
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: `Payment ${paymentStatus} successfully`,
+            data: order
+        });
+
+    } catch (error) {
+        console.error("Error confirming payment:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error confirming payment",
+            error: error.message
+        });
     }
-      // Send email to user confirming booking
-      await sendUserBookOrderApproveEmail(order.email, order.fullName);
-
-    return res.status(200).json({
-      success: true,
-      message: "Payment confirmed successfully",
-      data: order
-    });
-  } catch (error) {
-    console.error("Error confirming payment:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Error confirming payment",
-      error: error.message
-    });
-  }
 };
 
 // Update order status
