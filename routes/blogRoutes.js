@@ -16,7 +16,7 @@ blogRouter.get("/", getAllBlogs);
 blogRouter.get("/:id", getBlogById);
 
 blogRouter.post("/create", isAdmin, upload.single("coverImage"), createBlog);
-blogRouter.put("/:id",isAdmin, updateBlog);
+blogRouter.patch("/:id", isAdmin, upload.single("coverImage"), updateBlog);
 blogRouter.delete("/:id", isAdmin, deleteBlog);
 
 module.exports = blogRouter;

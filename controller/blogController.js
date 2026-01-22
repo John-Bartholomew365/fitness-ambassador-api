@@ -150,12 +150,12 @@ const createBlog = async (req, res) => {
  * @desc Update blog (Admin)
  * @route PUT /api/blogs/:id
  */
-const updateBlog = async (req, res) => {
+const updateBlog = async (req, res, next) => {
   try {
     const updateData = { ...req.body };
 
     /* -----------------------------
-       Handle publish logic
+       Handle publish
     ------------------------------*/
     if (updateData.publish !== undefined) {
       updateData.isPublished = String(updateData.publish).toLowerCase() === "true";
@@ -164,57 +164,52 @@ const updateBlog = async (req, res) => {
     }
 
     /* -----------------------------
-       Handle featured logic
+       Handle featured
     ------------------------------*/
     if (updateData.featured !== undefined) {
       updateData.featured = String(updateData.featured).toLowerCase() === "true";
     }
 
     /* -----------------------------
-       Update slug if title changes
+       Handle slug (title change)
     ------------------------------*/
     if (updateData.title) {
-      updateData.slug = slugify(updateData.title, { lower: true, strict: true });
+      updateData.slug = slugify(updateData.title, {
+        lower: true,
+        strict: true,
+      });
     }
 
     /* -----------------------------
-       Update cover image if uploaded
+       Handle cover image
     ------------------------------*/
+    const baseUrl = 'https://fitness-ambassador-api.onrender.com';
     if (req.file) {
-      updateData.coverImage = `${process.env.BASE_URL}/uploads/blogs/${req.file.filename}`;
+      updateData.coverImage = `${baseUrl}/api/uploads/${req.file.filename}`;
     }
 
-    // DEBUG: log update
-    console.log("req.params.id:", req.params.id);
-    console.log("updateData:", updateData);
+    // console.log("FINAL UPDATE DATA:", updateData);
 
-    /* -----------------------------
-       Update blog
-    ------------------------------*/
     const blog = await Blog.findByIdAndUpdate(
       req.params.id,
       { $set: updateData },
-      { new: true, runValidators: true }
+      {
+        new: true,
+        runValidators: true,
+      }
     );
 
     if (!blog) {
-      console.log("Blog not found!");
-      return res.status(404).json({ success: false, message: "Blog not found" });
+      return next(new AppError("No blog found with that ID", 404));
     }
 
-    console.log("Blog updated:", blog);
-
-    return res.status(200).json({
-      success: true,
-      message: "Blog updated successfully",
-      blog,
+    res.status(200).json({
+      status: "success",
+      data: { blog },
     });
-  } catch (error) {
-    console.error("Update blog error:", error);
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+  } catch (err) {
+    console.error(err);
+    next(err);
   }
 };
 
